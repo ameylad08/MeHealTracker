@@ -15,10 +15,8 @@ class DashBoardPage extends StatefulWidget {
 }
 
 class _DashBoardPageState extends State<DashBoardPage> {
-
   //Global Scaffold key
-  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>(); 
-
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   //fetching the current user from firestore
   User? user = FirebaseAuth.instance.currentUser;
@@ -56,18 +54,31 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 children: [
                   RichText(
                     text: TextSpan(
-                      text: 'Hi ${loggedInUser.name}',
-                      style: const TextStyle(color: Colors.black, fontSize: 32.0, fontFamily: 'Farro', fontWeight: FontWeight.w600),
+                      text: 'Hey ${loggedInUser.name}',
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 32.0,
+                          fontFamily: 'Farro',
+                          fontWeight: FontWeight.w600),
                       children: const <TextSpan>[
                         TextSpan(
-                            text: '\nYour Report',
-                            style: TextStyle(color: Colors.black87, fontSize: 32.0, fontFamily: 'Farro', fontWeight: FontWeight.w600),)
+                          text: '\nYour Report',
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 32.0,
+                              fontFamily: 'Farro',
+                              fontWeight: FontWeight.w600),
+                        )
                       ],
                     ),
                   ),
-                  RectButton(onPressed: (){setState(() {
-                    _scaffoldkey.currentState?.openDrawer();
-                  });}, ic: Icon(Icons.menu)),
+                  RectButton(
+                      onPressed: () {
+                        setState(() {
+                          _scaffoldkey.currentState?.openDrawer();
+                        });
+                      },
+                      ic: Icon(Icons.menu)),
                 ],
               ),
             ),
