@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mental_health_tracker/Constants/colors.dart';
+import 'package:mental_health_tracker/Screens/question.dart';
 import 'package:mental_health_tracker/models/user_model.dart';
 import 'package:mental_health_tracker/widgets/rect_button.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({Key? key}) : super(key: key);
@@ -30,13 +30,18 @@ class _DashBoardPageState extends State<DashBoardPage> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      this.loggedInUser = UserModel.fromMap(value.data());
+      loggedInUser = UserModel.fromMap(value.data());
       setState(() {});
     });
   }
 
+  Future<String?> getUsername() async {
+    return loggedInUser.name;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // loggedInUser.userinfo?.forEach((key,value) => {print("${key} ${value}")});
     return SafeArea(
       child: Scaffold(
         key: _scaffoldkey,
@@ -106,26 +111,34 @@ class _DashBoardPageState extends State<DashBoardPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      text: 'Hey ${loggedInUser.name}',
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 32.0,
-                          fontFamily: 'Farro',
-                          fontWeight: FontWeight.w600),
-                      children: const <TextSpan>[
-                        TextSpan(
-                          text: '\nYour Report',
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 32.0,
-                              fontFamily: 'Farro',
-                              fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
+                  FutureBuilder(
+                      initialData: "Hey",
+                      future: getUsername(),
+                      builder: (context, snapshot) {
+                        if (snapshot.data != null) {
+                          return RichText(
+                            text: TextSpan(
+                              text: 'Hey ${snapshot.data}',
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 32.0,
+                                  fontFamily: 'Farro',
+                                  fontWeight: FontWeight.w600),
+                              children: const <TextSpan>[
+                                TextSpan(
+                                  text: '\nYour Report',
+                                  style: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 32.0,
+                                      fontFamily: 'Farro',
+                                      fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+                        return CircularProgressIndicator();
+                      }),
                   RectButton(
                       onPressed: () {
                         setState(() {
@@ -175,27 +188,34 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         left: 25.0,
                         top: 90.0,
                         child: Text(
-                          'Good',
+                          '${loggedInUser.today}',
                           style: TextStyle(
                               fontSize: 29.0,
                               fontFamily: 'Farro',
                               color: Colors.white,
                               fontWeight: FontWeight.w700),
                         )),
-                    Positioned(
-                        left: 30.0,
-                        top: 130.0,
-                        child: CircularPercentIndicator(
-                          radius: 80.0,
-                          lineWidth: 6.0,
-                          percent: 0.6,
-                          center: new Text("60%"),
-                          progressColor: Colors.green,
-                        )),
                   ],
                 ),
               ),
             ),
+            ElevatedButton(
+              child: Text("Questions"),
+              onPressed: () {
+                setState(() {
+                  if (loggedInUser.questionans != "10") {
+                    Navigator.push(context, MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return QuestionPage(
+                        questionIn: int.parse(loggedInUser.questionIndex.toString()),
+                        userid: loggedInUser.uid.toString(),
+                      );
+                    },
+                  ));
+                  }
+                });
+              },
+            )
           ],
         ),
       ),
